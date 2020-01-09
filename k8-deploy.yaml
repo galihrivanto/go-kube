@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: go-hey-kube
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: go-hey-kube
+    template:
+        metadata:
+            labels:
+                app: go-hey-kube
+        spec:
+            containers:
+                - name: go-hey-kube
+                  image: galihrivanto/go-hey-kube:1.0.0
+                  imagePullPolicy: Always 
+                  ports:
+                    - containerPort: 8080
+                  livenessProbe:
+                    httpGet:
+                        path: /health
+                        port: 8080
+                        scheme: HTTP
+                    initialDelaySeconds: 5
+                    periodSeconds: 15
+                    timeoutSeconds: 5
+                  readinessProbe:
+                    httpGet:
+                        path: /readiness
+                        port: 8080
+                        scheme: HTTP
+                    initialDelaySeconds: 5
+                    timeoutSeconds: 1
