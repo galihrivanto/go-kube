@@ -41,10 +41,25 @@ kind: Service
 metadata:
     name: go-hey-kube-service
 spec:
-    type: NodePort
     ports:
         - name: http
-          port: 9090
+          port: 80
           targetPort: 8080
     selector:
         app: go-hey-kube 
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+    annotations:
+        external-dns.alpha.kubernetes.io/hostname: hey-kube.mlg-dev.local
+    name: hey-kube-ingress
+spec:
+    rules:
+        - host: hey-kube.mlg-dev.local
+          http:
+            paths:
+                - backend:
+                    serviceName: go-hey-kube-service
+                    servicePort: 80
